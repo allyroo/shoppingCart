@@ -27,6 +27,10 @@ body {
   width: 100%;
 }
 
+.title {
+  text-align: center;
+}
+
 .search {
   display: flex;
   justify-content: center;
@@ -39,6 +43,10 @@ body {
 }
 .grocery-item {
   display: flex;
+}
+
+.how-much {
+  margin: 0px 8px;
 }
 
 .list-items {
@@ -56,4 +64,8 @@ body {
   color: cornflowerblue;
   list-style-type: none;
   padding-left: 1rem;
+}
+
+.quantity {
+  font-size: 10px;
 }

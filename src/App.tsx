@@ -6,6 +6,7 @@ function App() {
   const [searchResults, setSearchResults] = useState<Array<string>>([]);
   const [foodQuery, setFoodQuery] = useState<string>("");
   const [toBuyList, setToBuyList] = useState<IGrocery[]>([]);
+  const [quantity, setQuantity] = useState<number>(1);
 
   useEffect(() => {
     if (foodQuery) {
@@ -16,26 +17,53 @@ function App() {
   }, [foodQuery]);
 
   function addGrocery(event: MouseEvent<HTMLButtonElement>): void {
-    event.preventDefault();
-    const addItem = { foodQuery: foodQuery, isFound: false };
-    setToBuyList([...toBuyList, addItem]);
-    setFoodQuery("");
+    if (!foodQuery) {
+      alert("Please input item");
+    } else {
+      event.preventDefault();
+      const addItem = {
+        groceryItem: foodQuery,
+        isFound: false,
+        groceryQuantity: quantity,
+      };
+      setToBuyList([...toBuyList, addItem]);
+      setFoodQuery("");
+      setQuantity(1);
+    }
   }
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
     setFoodQuery(event.target.value);
   }
 
-  function deleteGrocery(deleteGroceryItem: string) {
+  function handleIncrease(event: MouseEvent<HTMLButtonElement>): void {
+    setQuantity(quantity + 1);
+    event.preventDefault();
+  }
+
+  function handleDecrease(event: MouseEvent<HTMLButtonElement>): void {
+    if (quantity < 1) {
+      alert("Quantity cannot be less than one!");
+    } else {
+      setQuantity(quantity - 1);
+      event.preventDefault();
+    }
+  }
+
+  function deleteGrocery(deleteGroceryItem: string): void {
     setToBuyList(
-      toBuyList.filter((item) => item.foodQuery !== deleteGroceryItem)
+      toBuyList.filter((item) => item.groceryItem !== deleteGroceryItem)
     );
   }
 
-  function handleToggle(index: number) {
+  function handleToggle(index: number): void {
     const updatedToBuyList = [...toBuyList];
     updatedToBuyList[index].isFound = !updatedToBuyList[index].isFound;
     setToBuyList(updatedToBuyList);
+  }
+
+  function handleDropDown(): void {
+    if (foodQuery) setSearchResults([]);
   }
 
   return (
@@ -51,6 +79,13 @@ function App() {
           list="item"
           onChange={handleChange}
         />
+        <label htmlFor="quantity">
+          <button onClick={handleDecrease}>-</button>
+          <span className="how-much">{quantity}</span>
+
+          <button onClick={handleIncrease}>+</button>
+        </label>
+
         <button className="addGroceryButton" onClick={addGrocery}>
           Add Item
         </button>
@@ -59,7 +94,7 @@ function App() {
       <div className="shopping-list">
         <datalist id="item">
           {searchResults.map((grocery: string, index: number) => (
-            <select key={index}>
+            <select onClick={handleDropDown} key={index}>
               <option>{grocery}</option>
             </select>
           ))}
@@ -84,13 +119,14 @@ function App() {
                     className={grocery.isFound ? "item-found" : "item-to-seek"}
                     key={index}
                   >
-                    {grocery.foodQuery}
+                    {grocery.groceryItem}
                   </li>
+                  <span className="quantity">(x{grocery.groceryQuantity})</span>
                 </div>
 
                 <button
                   className="deleteButton"
-                  onClick={() => deleteGrocery(grocery.foodQuery)}
+                  onClick={() => deleteGrocery(grocery.groceryItem)}
                 >
                   x
                 </button>

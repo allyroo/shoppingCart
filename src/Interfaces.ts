@@ -1,4 +1,5 @@
 export interface IGrocery {
-  foodQuery: string;
+  groceryItem: string;
   isFound: boolean;
+  groceryQuantity: number;
 }
